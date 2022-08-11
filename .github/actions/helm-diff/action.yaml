@@ -33,6 +33,10 @@ inputs:
     description: 'Path to Values to use'
     required: true
 
+  image_tag:
+    description: 'Image tag to use'
+    required: true
+
 runs:
   using: "composite"
   steps:
@@ -48,6 +52,6 @@ runs:
       shell: bash
       run: |
         helm plugin install https://github.com/databus23/helm-diff
-        helm diff --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --debug ${{ inputs.release_name }} ${{ inputs.chart }}
+        helm diff --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --debug --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         
        
