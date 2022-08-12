@@ -49,9 +49,19 @@ runs:
       name: Validate Helm Chart
       with:
         namespace: ${{ inputs.namespace }}
-        chart: forestsoft/forestsoft-helm-lamp
+        chart: ${{ inputs.chart }}
         release_name: ${{ inputs.release_name }}
-        values: "build/charts/values.yaml -f build/charts/${{ inputs.environment }}-values.yaml"
+        values: ${{ inputs.values }}
+        image_tag: ${{ inputs.image_tag }}
+        kube_config: ${{ inputs.kube_config }}
+    
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-dry-run@main
+      name: Dry Run Helm Chart
+      with:
+        namespace: ${{ inputs.namespace }}
+        chart: ${{ inputs.chart }}
+        release_name: ${{ inputs.release_name }}
+        values: ${{ inputs.values }}
         image_tag: ${{ inputs.image_tag }}
         kube_config: ${{ inputs.kube_config }}
 

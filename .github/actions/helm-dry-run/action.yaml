@@ -1,0 +1,66 @@
+name: Helm Dry Run
+description: Try to upgrade a Helm Chart
+
+inputs: 
+  
+  namespace:
+    description: 'Namespace to diff'
+    required: true
+  
+  chart:
+    description: 'Chart to deploy'
+    required: true
+  
+  kube_config:
+    description: 'Kube config secret as base64 string'
+    required: true
+
+  repo_name:
+    description: 'Name of the Helm repo'
+    required: false
+    default: forestsoft
+  
+  repo:
+    description: 'URL to repo'
+    required: false
+    default: 'https://Forestsoft-de.github.io/helm-charts/charts'
+  
+  release_name:
+    description: 'Name of the release'
+    required: true
+
+  values:
+    description: 'Path to Values to use'
+    required: true
+
+  image_tag:
+    description: 'Image tag to use'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Validate Action"
+      shell: bash
+      run: |
+        if [ "${{inputs.image_tag}}" == "" ]; then
+           echo "No image tag provided"
+           exit 1
+        fi
+    - uses: actions/checkout@v2
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
+      with:
+        kube_config: ${{ inputs.kube_config }}
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-repo@main
+      if: inputs.repo != ''
+      with:
+        repo_name: ${{ inputs.repo_name }}
+        repo: ${{ inputs.repo }}
+    - name: "Helm Dry Run"
+      shell: bash
+      env:
+        TERM: xterm-color
+      run: |
+        helm upgrade --install --dry-run --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+        
+       
