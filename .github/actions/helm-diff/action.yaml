@@ -41,10 +41,10 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/kube-credentials
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
       with:
         kube_config: ${{ inputs.kube_config }}
-    - uses: ./.github/actions/helm-repo
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-repo@main
       with:
         repo_name: ${{ inputs.repo_name }}
         repo: ${{ inputs.repo }}
