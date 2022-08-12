@@ -11,7 +11,7 @@ runs:
     - name: "Provide credentials"
       shell: bash
       run: |
-          mkdir ~/.kube/
+          mkdir -p ~/.kube/
           echo -n "${{inputs.kube_config}}" | base64 -d  > ~/.kube/config
           chmod 600 ~/.kube/config
           mysize=$(find "$HOME/.kube/config" -printf "%s")
