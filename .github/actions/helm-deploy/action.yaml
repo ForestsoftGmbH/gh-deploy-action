@@ -49,7 +49,7 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v2
-    - uses: .github/actions/helm-diff
+    - uses: ForestsoftGmbH/gh-deploy-action/actions/helm-diff@main
       name: Validate Helm Chart
       with:
         namespace: ${{ inputs.namespace }}
@@ -59,7 +59,7 @@ runs:
         image_tag: ${{ inputs.tag }}
         kube_config: ${{ secrets.KUBECONFIG }}
 
-    - uses: .github/actions/helm-repo
+    - uses: ForestsoftGmbH/gh-deploy-action/actions/helm-repo@main
       if: inputs.repo != ''
       with:
         repo_name: ${{ inputs.repo_name }}
