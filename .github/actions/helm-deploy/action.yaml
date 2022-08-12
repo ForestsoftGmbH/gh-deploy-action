@@ -57,7 +57,7 @@ runs:
         release_name: ${{ inputs.release_name }}
         values: "build/charts/values.yaml -f build/charts/${{ inputs.environment }}-values.yaml"
         image_tag: ${{ inputs.tag }}
-        kube_config: ${{ input.kube_config }}
+        kube_config: ${{ inputs.kube_config }}
 
     - uses: ForestsoftGmbH/gh-deploy-action/actions/helm-repo@main
       if: inputs.repo != ''
