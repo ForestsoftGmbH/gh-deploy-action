@@ -40,6 +40,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: "Validate Action"
+      shell: bash
+      run: |
+        if [ "${{inputs.image_tag}}" == "" ]; then
+           echo "No image tag provided"
+           exit 1
+        fi
     - uses: actions/checkout@v2
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
       with:
@@ -55,13 +62,10 @@ runs:
         helm plugin install https://github.com/databus23/helm-diff || true
     - name: "Helm Diff"
       shell: bash
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
       run: |
-        export TERM=xterm-color
-        export HELM_DIFF_COLOR=true
-        if [ "${{inputs.image_tag}}" == "" ]; then
-           echo "No image tag provided"
-           exit 1
-        fi
         helm diff upgrade --allow-unreleased --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --debug --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         
        

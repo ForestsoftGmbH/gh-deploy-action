@@ -51,9 +51,10 @@ runs:
     
     - name: "Helm Deploy"
       shell: bash
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
       run: |
-        export TERM=xterm-color
-        export HELM_DIFF_COLOR=true
         helm upgrade --install --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         
        
