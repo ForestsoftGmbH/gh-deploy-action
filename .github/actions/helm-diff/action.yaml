@@ -48,10 +48,13 @@ runs:
       with:
         repo_name: ${{ inputs.repo_name }}
         repo: ${{ inputs.repo }}
-    - name: "Helm diff"
+    - name: "Helm Intall Plugin"
       shell: bash
       run: |
         helm plugin install https://github.com/databus23/helm-diff
+    - name: "Helm Diff"
+      shell: bash
+      run: |
         helm diff --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --debug --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         
        

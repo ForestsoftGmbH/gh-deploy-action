@@ -14,3 +14,8 @@ runs:
           mkdir ~/.kube/
           echo -n "${{inputs.kube_config}}" | base64 -d  > ~/.kube/config
           chmod 600 ~/.kube/config
+          mysize=$(find "$HOME/.kube/config" -printf "%s")
+          if [ $mysize -lt 100 ]; then
+            echo "Kube config is too small"
+            exit 1
+          fi
