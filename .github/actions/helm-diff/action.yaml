@@ -45,6 +45,7 @@ runs:
       with:
         kube_config: ${{ inputs.kube_config }}
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-repo@main
+      if: inputs.repo != ''
       with:
         repo_name: ${{ inputs.repo_name }}
         repo: ${{ inputs.repo }}
