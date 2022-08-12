@@ -55,6 +55,7 @@ runs:
     - name: "Helm Diff"
       shell: bash
       run: |
+        export TERM=xterm-color
         helm diff --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --debug --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.repo_name }}/${{ inputs.chart }}
         
        
