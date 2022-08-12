@@ -27,11 +27,7 @@ inputs:
   release_name:
     description: 'Name of the release'
     required: true
-
-  tag:
-    required: true
-    description: 'Image tag to use'
-  
+ 
   values:
     description: 'Path to Values to use'
     required: true
@@ -56,7 +52,7 @@ runs:
         chart: forestsoft/forestsoft-helm-lamp
         release_name: ${{ inputs.release_name }}
         values: "build/charts/values.yaml -f build/charts/${{ inputs.environment }}-values.yaml"
-        image_tag: ${{ inputs.tag }}
+        image_tag: ${{ inputs.image_tag }}
         kube_config: ${{ inputs.kube_config }}
 
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-repo@main
