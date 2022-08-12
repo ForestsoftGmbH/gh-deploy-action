@@ -28,6 +28,10 @@ inputs:
     description: 'Name of the release'
     required: true
 
+  tag:
+    required: true
+    description: 'Image tag to use'
+  
   values:
     description: 'Path to Values to use'
     required: true
@@ -36,20 +40,33 @@ inputs:
     description: 'Image tag to use'
     required: true
 
+  dry_run:
+    description: 'Dry run'
+    required: false
+    default: 'true'
+
 runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v2
-    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
+    - uses: .github/actions/helm-diff
+      name: Validate Helm Chart
       with:
-        kube_config: ${{ inputs.kube_config }}
-    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-repo@main
+        namespace: ${{ inputs.namespace }}
+        chart: forestsoft/forestsoft-helm-lamp
+        release_name: ${{ inputs.release_name }}
+        values: "build/charts/values.yaml -f build/charts/${{ inputs.environment }}-values.yaml"
+        image_tag: ${{ inputs.tag }}
+        kube_config: ${{ secrets.KUBECONFIG }}
+
+    - uses: .github/actions/helm-repo
       if: inputs.repo != ''
       with:
         repo_name: ${{ inputs.repo_name }}
         repo: ${{ inputs.repo }}
     
     - name: "Helm Deploy"
+      if: inputs.dry_run == 'false'
       shell: bash
       env:
         TERM: xterm-color
