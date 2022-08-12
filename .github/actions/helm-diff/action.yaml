@@ -59,7 +59,7 @@ runs:
     - name: "Helm Intall Plugin"
       shell: bash
       run: |
-        helm plugin install https://github.com/databus23/helm-diff || true
+        helm plugin install https://github.com/databus23/helm-diff > /dev/null || true
     - name: "Helm Diff"
       shell: bash
       env:
