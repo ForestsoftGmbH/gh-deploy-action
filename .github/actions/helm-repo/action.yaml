@@ -8,7 +8,7 @@ inputs:
   repo:
     description: 'URL to repo'
     required: false
-    default: 'https://Forestsoft-de.github.io/helm-charts/charts'
+    default: 'https://forestsoftgmbh.github.io/helm-charts/charts'
 
 runs:
   using: "composite"
