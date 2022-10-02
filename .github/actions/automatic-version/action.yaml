@@ -1,0 +1,43 @@
+name: Autmatic Version
+description: Use this action to automatically increase the version of your project
+
+inputs:
+  tag_version:
+    description: 'Tag version'
+    required: false
+    default: 'true'
+outputs:
+  version:
+    description: 'The new version'
+    value: ${{ steps.version.outputs.version }}
+  isNewVersion:
+    description: 'True if the version has been increased'
+    value: ${{ steps.version.outputs.isNewVersion }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Get next version
+      id: get_next_version
+      uses: thenativeweb/get-next-version
+    
+    - name: Show the next version
+      shell: bash
+      id: version
+      run: |
+        echo ${{ steps.get_next_version.outputs.version }}
+        echo ${{ steps.get_next_version.outputs.hasNextVersion }}
+    - name: Tag version
+      if: inputs.tag_version == 'true'
+      shell: bash
+      run: |
+        git config --global user.email ""    
+        git config --global user.name "GitHub Action"
+        git tag ${{ steps.get_next_version.outputs.version }}
+        git push --tags
+
+       
