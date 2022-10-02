@@ -23,8 +23,9 @@ runs:
     
     - name: Get next version
       id: get_next_version
-      uses: thenativeweb/get-next-version@2.1.2
-    
+      uses: docker://forestsoft/get-next-version
+      with:
+        entrypoint: /action/entrypoint.sh
     - name: Show the next version
       shell: bash
       id: version
