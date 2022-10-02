@@ -9,10 +9,10 @@ inputs:
 outputs:
   version:
     description: 'The new version'
-    value: ${{ steps.version.outputs.version }}
+    value: ${{ steps.get_next_version.outputs.version }}
   isNewVersion:
     description: 'True if the version has been increased'
-    value: ${{ steps.version.outputs.isNewVersion }}
+    value: ${{ steps.get_next_version.outputs.isNewVersion }}
 
 runs:
   using: "composite"
