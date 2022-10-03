@@ -12,7 +12,7 @@ outputs:
     value: ${{ steps.get_next_version.outputs.version }}
   isNewVersion:
     description: 'True if the version has been increased'
-    value: ${{ steps.get_next_version.outputs.isNewVersion }}
+    value: ${{ steps.get_next_version.outputs.hasNextVersion }}
 
 runs:
   using: "composite"
