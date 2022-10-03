@@ -39,7 +39,7 @@ runs:
         git config --global user.email ""    
         git config --global user.name "GitHub Action"
         git tag ${{ steps.get_next_version.outputs.version }}
-        git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git --foolow-tags
+        git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git --follow-tags
         git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git --tags
         
 
