@@ -20,8 +20,8 @@ runs:
     - id: detect_version
       shell: bash
       run: |
-        if [ "${{github.event.pull_request.head.sha}}" != "" ]; then
-          COMMIT=$(echo "${{github.event.pull_request.head.sha}}" | head -c 7)
+        if [ "${{github.event.pull_request.head.ref}}" != "" ]; then
+          COMMIT=${{github.event.pull_request.head.ref}}
         else 
           COMMIT=$GITHUB_SHA
         fi
