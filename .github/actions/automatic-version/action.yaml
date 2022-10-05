@@ -17,8 +17,18 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - id: detect_version
+      shell: bash
+      run: |
+        if [ "${{github.event.pull_request.head.sha}}" != "" ]; then
+          COMMIT=$(echo "${{github.event.pull_request.head.sha}}" | head -c 6)
+        else 
+          COMMIT=$GITHUB_SHA
+        fi
+        echo "::set-output name=docker_tag::$COMMIT"
     - uses: actions/checkout@v3
       with:
+        ref: ${{steps.detect_version.outputs.docker_tag}}
         fetch-depth: 0
     
     - name: Get next version
