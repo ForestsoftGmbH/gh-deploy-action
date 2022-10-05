@@ -21,7 +21,7 @@ runs:
       shell: bash
       run: |
         if [ "${{github.event.pull_request.head.sha}}" != "" ]; then
-          COMMIT=$(echo "${{github.event.pull_request.head.sha}}" | head -c 6)
+          COMMIT=$(echo "${{github.event.pull_request.head.sha}}" | head -c 7)
         else 
           COMMIT=$GITHUB_SHA
         fi
