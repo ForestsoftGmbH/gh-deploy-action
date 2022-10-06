@@ -23,7 +23,7 @@ runs:
         if [ "${{github.event.pull_request.head.ref}}" != "" ]; then
           COMMIT=${{github.event.pull_request.head.ref}}
         else 
-          COMMIT=$GITHUB_SHA
+          COMMIT=${{github.ref_name}}
         fi
         echo "::set-output name=docker_tag::$COMMIT"
     - uses: actions/checkout@v3
