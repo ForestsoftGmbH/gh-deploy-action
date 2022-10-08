@@ -1,10 +1,7 @@
 name: Create Pull Request
 description: Create a pull request based on branch name with correct labels
 inputs:
-  branch:
-    description: Branch name
-    required: true
-  token:
+  github_token:
     description: Token to create pull requests
     required: true
 runs:
