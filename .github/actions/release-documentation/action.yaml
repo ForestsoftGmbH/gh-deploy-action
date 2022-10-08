@@ -12,12 +12,10 @@ runs:
   steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      shell: bash
       with:
         ref: '${{ inputs.version }}'
         fetch-depth: 0
     - uses: actions/github-script@v6
-      shell: bash
       id: last-release
       with:
         github-token: "${{ inputs.github_token }}"
@@ -37,7 +35,6 @@ runs:
     
     - name: Build changelog
       id: build_changelog
-      shell: bash
       uses: mikepenz/release-changelog-builder-action@main
       with:
         configuration: './release-changelog-builder-config.json'
@@ -47,12 +44,11 @@ runs:
     
     - name: "Handle github release"
       uses: "actions/github-script@v6"
-      shell: bash
       with:
         github-token: "${{ inputs.github_token }}"
         debug: false
         script: |
-          const script = require('${{ github.action_path }}/.github/actions/release-documentation/release-handler.ts')
+          const script = require('process.env.GITHUB_ACTION_PATH + '/release-handler.ts')
           const version = `${{ inputs.version }}`
           const changelog = `${{ steps.build_changelog.outputs.changelog }}`
           await script({github, context, core, version, changelog})
