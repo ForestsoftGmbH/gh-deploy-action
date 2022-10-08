@@ -7,7 +7,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/github-script@v6
     - name: "Create pull request"
       uses: "actions/github-script@v6"
       with:
