@@ -7,13 +7,9 @@ inputs:
 runs:
   using: composite
   steps:
-    
     - uses: actions/github-script@v6
-      shell: bash
-    
     - name: "Create pull request"
       uses: "actions/github-script@v6"
-      shell: bash
       with:
         github-token: "${{ inputs.github_token }}"
         debug: false
