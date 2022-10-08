@@ -4,6 +4,10 @@ inputs:
   github_token:
     description: Token to create pull requests
     required: true
+outputs:
+  pull_request_number:
+    description: The number of the pull request
+    value: ${{ steps.create_pull_request.outputs.result }}
 runs:
   using: composite
   steps:

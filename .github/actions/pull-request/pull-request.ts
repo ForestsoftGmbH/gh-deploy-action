@@ -34,6 +34,7 @@ module.exports = async ({ github, context }) => {
             issue_number: result.data.number,
             labels: labels
         });
+        core.setOutput('result', result.data.number);
     } catch (error) {
         console.log(error);
     }
