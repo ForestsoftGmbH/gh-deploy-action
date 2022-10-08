@@ -1,0 +1,58 @@
+name: Release Documentation
+description: Get a release documentation based on Pullrequest between last relase and current tag
+inputs:
+  version:
+    description: 'Tag to be created and released'
+    required: true
+  github_token:
+    description: 'Github token'
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      shell: bash
+      with:
+        ref: '${{ inputs.version }}'
+        fetch-depth: 0
+    - uses: actions/github-script@v6
+      shell: bash
+      id: last-release
+      with:
+        github-token: "${{ inputs.github_token }}"
+        debug: false
+        script: |
+          try {
+              const response = await github.rest.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              });
+              core.setOutput("tag", response.data.tag_name);
+          } catch (error) {
+            if (error.message != "Not Found") {
+              core.setFailed(error.message);
+            }
+          } 
+    
+    - name: Build changelog
+      id: build_changelog
+      shell: bash
+      uses: mikepenz/release-changelog-builder-action@main
+      with:
+        configuration: './release-changelog-builder-config.json'
+        fromTag: ${{ steps.last-release.outputs.tag }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+    
+    - name: "Handle github release"
+      uses: "actions/github-script@v6"
+      shell: bash
+      with:
+        github-token: "${{ inputs.github_token }}"
+        debug: false
+        script: |
+          const script = require('${{ github.action_path }}/.github/actions/release-documentation/release-handler.ts')
+          const version = `${{ inputs.version }}`
+          const changelog = `${{ steps.build_changelog.outputs.changelog }}`
+          await script({github, context, core, version, changelog})
