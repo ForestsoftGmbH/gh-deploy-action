@@ -13,5 +13,5 @@ runs:
         github-token: "${{ inputs.github_token }}"
         debug: false
         script: |
-          const script = require('${{ github.action_path }}/pull-request.ts')
+          const script = require('./pull-request.ts')
           await script({github, context})
