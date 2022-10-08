@@ -1,0 +1,25 @@
+name: Create Pull Request
+description: Create a pull request based on branch name with correct labels
+inputs:
+  branch:
+    description: Branch name
+    required: true
+  token:
+    description: Token to create pull requests
+    required: true
+runs:
+  using: composite
+  steps:
+    
+    - uses: actions/github-script@v6
+      shell: bash
+    
+    - name: "Create pull request"
+      uses: "actions/github-script@v6"
+      shell: bash
+      with:
+        github-token: "${{ inputs.github_token }}"
+        debug: false
+        script: |
+          const script = require('${{ github.action_path }}/.github/actions/pull-request/pull-request.ts')
+          await script({github, context})
