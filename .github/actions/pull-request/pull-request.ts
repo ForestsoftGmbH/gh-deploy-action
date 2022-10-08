@@ -1,9 +1,8 @@
 module.exports = async ({ github, context }) => {
     try {
         const { repo, owner } = context.repo;
-        console.log(github.event)
         const result = await github.rest.pulls.create({
-            title: `${github.event.head_commit.message}`,
+            title: `${context.payload.head_commit.message}`,
             owner,
             repo,
             head: github.ref_name,
@@ -36,8 +35,6 @@ module.exports = async ({ github, context }) => {
             labels: labels
         });
     } catch (error) {
-        //console.log(github)
-        console.log(context)
         console.log(error);
     }
 };
