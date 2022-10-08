@@ -1,0 +1,21 @@
+name: Create Pull Request
+description: Create a pull request based on branch name with correct labels
+inputs:
+  github_token:
+    description: Token to create pull requests
+    required: true
+outputs:
+  pull_request_number:
+    description: The number of the pull request
+    value: ${{ steps.create_pull_request.outputs.result }}
+runs:
+  using: composite
+  steps:
+    - name: "Create pull request"
+      uses: "actions/github-script@v6"
+      with:
+        github-token: "${{ inputs.github_token }}"
+        debug: false
+        script: |
+          const script = require(process.env.GITHUB_ACTION_PATH + '/pull-request.ts')
+          await script({github, context, core})
