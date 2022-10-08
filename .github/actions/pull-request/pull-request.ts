@@ -1,6 +1,8 @@
 module.exports = async ({ github, context }) => {
     try {
         const { repo, owner } = context.repo;
+        console.log(github);
+        console.log(context);
         const result = await github.rest.pulls.create({
             title: `${context.payload.head_commit.message}`,
             owner,
