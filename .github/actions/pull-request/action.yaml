@@ -18,4 +18,4 @@ runs:
         debug: false
         script: |
           const script = require(process.env.GITHUB_ACTION_PATH + '/pull-request.ts')
-          await script({github, context})
+          await script({github, context, core})

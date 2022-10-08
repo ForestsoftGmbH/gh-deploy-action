@@ -1,4 +1,4 @@
-module.exports = async ({ github, context }) => {
+module.exports = async ({ github, context, core }) => {
     try {
         const { repo, owner } = context.repo;
         const headBranch = context.payload.ref.replace("refs/heads/", "");
