@@ -48,7 +48,7 @@ runs:
         github-token: "${{ inputs.github_token }}"
         debug: false
         script: |
-          const script = require('process.env.GITHUB_ACTION_PATH + '/release-handler.ts')
+          const script = require(process.env.GITHUB_ACTION_PATH + '/release-handler.ts')
           const version = `${{ inputs.version }}`
           const changelog = `${{ steps.build_changelog.outputs.changelog }}`
           await script({github, context, core, version, changelog})
