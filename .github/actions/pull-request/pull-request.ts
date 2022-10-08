@@ -37,6 +37,7 @@ module.exports = async ({ github, context }) => {
         });
     } catch (error) {
         console.log(github)
+        console.log(context.event)
         console.log(error);
     }
 };
