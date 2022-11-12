@@ -1,0 +1,22 @@
+name: Helm Dependency Update
+description: Update dependend charts if chart is local
+
+inputs: 
+  chart:
+    description: 'Chart to deploy'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Helm Dependency Update"
+      shell: bash
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
+      run: |
+        if [ -f "${{inputs.chart}}/Chart.yaml" ]; then
+          helm dependency update ${{inputs.chart}}
+        fi
+        
+       
