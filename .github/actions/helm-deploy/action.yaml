@@ -44,7 +44,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-repo@main
       if: inputs.repo != ''
       with:

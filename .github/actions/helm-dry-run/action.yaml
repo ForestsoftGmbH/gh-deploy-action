@@ -47,7 +47,6 @@ runs:
            echo "No image tag provided"
            exit 1
         fi
-    - uses: actions/checkout@v2
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
       with:
         kube_config: ${{ inputs.kube_config }}
