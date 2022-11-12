@@ -66,6 +66,7 @@ runs:
         TERM: xterm-color
         HELM_DIFF_COLOR: "true"
       run: |
+        helm dependency update
         helm diff upgrade --allow-unreleased --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         
        
