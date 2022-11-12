@@ -61,6 +61,7 @@ runs:
       env:
         TERM: xterm-color
       run: |
+        helm dependency update
         helm upgrade --install --dry-run --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         
        
