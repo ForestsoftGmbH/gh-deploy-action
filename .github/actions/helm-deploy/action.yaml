@@ -36,6 +36,11 @@ inputs:
     description: 'Image tag to use'
     required: true
 
+  test_release:
+    description: 'Run Helm tests after release'
+    required: false
+    default: 'false'
+
   dry_run:
     description: 'Dry run'
     required: false
@@ -81,5 +86,12 @@ runs:
         HELM_DIFF_COLOR: "true"
       run: |
         helm upgrade --install --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
-        
+    - name: "Test release"        
+      shell: bash
+      if: inputs.test_release == 'true'
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
+      run: |
+        helm test ${{ inputs.release_name }}
        
