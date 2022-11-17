@@ -40,13 +40,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: "Validate Action"
-      shell: bash
-      run: |
-        if [ "${{inputs.image_tag}}" == "" ]; then
-           echo "No image tag provided"
-           exit 1
-        fi
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
       with:
         kube_config: ${{ inputs.kube_config }}
@@ -65,7 +58,7 @@ runs:
         TERM: xterm-color
         HELM_DIFF_COLOR: "true"
       run: |
-        if [ "${{input.image_tag}}" != "" ]; then
+        if [ "${{inputs.image_tag}}" != "" ]; then
           helm diff upgrade --allow-unreleased --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         else 
           helm diff upgrade --allow-unreleased --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} ${{ inputs.release_name }} ${{ inputs.chart }}
