@@ -34,7 +34,8 @@ inputs:
 
   image_tag:
     description: 'Image tag to use'
-    required: true
+    default: ''
+    required: false
 
   test_release:
     description: 'Run Helm tests after release'

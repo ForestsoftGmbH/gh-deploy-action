@@ -35,7 +35,7 @@ inputs:
 
   image_tag:
     description: 'Image tag to use'
-    required: true
+    required: false
 
 runs:
   using: "composite"
@@ -65,6 +65,9 @@ runs:
         TERM: xterm-color
         HELM_DIFF_COLOR: "true"
       run: |
-        helm diff upgrade --allow-unreleased --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
-        
+        if [ "${{input.image_tag}}" != "" ]; then
+          helm diff upgrade --allow-unreleased --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+        else 
+          helm diff upgrade --allow-unreleased --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} ${{ inputs.release_name }} ${{ inputs.chart }}
+        fi
        

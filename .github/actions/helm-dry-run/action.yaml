@@ -35,18 +35,11 @@ inputs:
 
   image_tag:
     description: 'Image tag to use'
-    required: true
+    required: false
 
 runs:
   using: "composite"
   steps:
-    - name: "Validate Action"
-      shell: bash
-      run: |
-        if [ "${{inputs.image_tag}}" == "" ]; then
-           echo "No image tag provided"
-           exit 1
-        fi
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
       with:
         kube_config: ${{ inputs.kube_config }}
@@ -60,6 +53,11 @@ runs:
       env:
         TERM: xterm-color
       run: |
-        helm upgrade --install --dry-run --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+        if [ "${{inputs.image_tag}}" == "" ]; then
+          helm upgrade --install --dry-run --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} ${{ inputs.release_name }} ${{ inputs.chart }}
+        else
+          helm upgrade --install --dry-run --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+        fi
+        
         
        
