@@ -57,6 +57,16 @@ inputs:
     required: false
     default: 'false'
   
+  diff:
+    description: 'Number of lines to show in diff'
+    required: false
+    default: "true"
+  
+  history_max:
+    description: 'Keep at most this many history entries'
+    required: false
+    default: "2"
+  
   diff_lines:
     description: 'Number of lines to show in diff'
     required: false
@@ -80,7 +90,7 @@ runs:
         chart: ${{ inputs.chart }}
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-diff@main
       name: Validate Helm Chart
-      if: inputs.dry_run == 'true'
+      if: inputs.diff == 'true'
       with:
         namespace: ${{ inputs.namespace }}
         chart: ${{ inputs.chart }}
@@ -123,7 +133,7 @@ runs:
         if [ "${{ inputs.atomic }}" == "true" ]; then
           OPTS="$OPTS --atomic"
         fi
-        helm upgrade --install --history-max=2 --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
+        helm upgrade --install --history-max=${{ inputs.history_max }} --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
     - name: "Test release"        
       shell: bash
       if: inputs.test_release == 'true' && inputs.dry_run == 'false'
