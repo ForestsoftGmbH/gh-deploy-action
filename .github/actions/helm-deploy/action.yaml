@@ -86,7 +86,7 @@ runs:
         TERM: xterm-color
         HELM_DIFF_COLOR: "true"
       run: |
-        helm upgrade --install --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+        helm upgrade --install --history-max=2 --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
     - name: "Test release"        
       shell: bash
       if: inputs.test_release == 'true' && inputs.dry_run == 'false'
