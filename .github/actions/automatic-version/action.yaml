@@ -33,7 +33,7 @@ runs:
     
     - name: Get next version
       id: get_next_version
-      uses: docker://forestsoft/get-next-version
+      uses: docker://ghcr.io/thenativeweb/get-next-version:2.5.
       with:
         entrypoint: /action/entrypoint.sh
     - name: Show the next version
