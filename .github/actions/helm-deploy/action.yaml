@@ -56,7 +56,12 @@ inputs:
     description: 'Run Helm tests after release'
     required: false
     default: 'false'
-
+  
+  diff_lines:
+    description: 'Number of lines to show in diff'
+    required: false
+    default: "10"
+  
   dry_run:
     description: 'Dry run'
     required: false
@@ -83,6 +88,7 @@ runs:
         repo: ${{ inputs.repo }}
         values: ${{ inputs.values }}
         image_tag: ${{ inputs.image_tag }}
+        diff_lines: ${{ inputs.diff_lines }}
         kube_config: ${{ inputs.kube_config }}
     
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-dry-run@main
