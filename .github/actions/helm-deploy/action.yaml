@@ -75,6 +75,7 @@ runs:
         chart: ${{ inputs.chart }}
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-diff@main
       name: Validate Helm Chart
+      if: inputs.dry_run == 'true'
       with:
         namespace: ${{ inputs.namespace }}
         chart: ${{ inputs.chart }}
@@ -86,6 +87,7 @@ runs:
     
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-dry-run@main
       name: Dry Run Helm Chart
+      if: inputs.dry_run == 'true'
       with:
         namespace: ${{ inputs.namespace }}
         chart: ${{ inputs.chart }}
