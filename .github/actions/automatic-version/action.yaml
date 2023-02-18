@@ -9,10 +9,10 @@ inputs:
 outputs:
   version:
     description: 'The new version'
-    value: ${{ steps.get_next_version.outputs.version }}
+    value: ${{ steps.version.outputs.version }}
   isNewVersion:
     description: 'True if the version has been increased'
-    value: ${{ steps.get_next_version.outputs.hasNextVersion }}
+    value: ${{ steps.version.outputs.hasNextVersion }}
 
 runs:
   using: "composite"
@@ -42,6 +42,8 @@ runs:
       run: |
         echo ${{ steps.get_next_version.outputs.version }}
         echo ${{ steps.get_next_version.outputs.hasNextVersion }}
+        echo "version=${{ steps.get_next_version.outputs.version }}" >> $GITHUB_OUTPUT
+        echo "hasNextVersion=${{ steps.get_next_version.outputs.hasNextVersion }}" >> $GITHUB_OUTPUT
     - name: Tag version
       if: inputs.tag_version == 'true' && steps.get_next_version.outputs.hasNextVersion == 'true'
       shell: bash
