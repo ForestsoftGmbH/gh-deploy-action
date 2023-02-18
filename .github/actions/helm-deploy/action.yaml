@@ -32,6 +32,21 @@ inputs:
     description: 'Path to Values to use'
     required: true
 
+  wait:
+    description: 'Wait for resources to be ready'
+    required: false
+    default: 'true'
+
+  timeout:
+    description: 'Timeout for wait'
+    required: false
+    default: '5m'
+  
+  atomic:
+    description: 'Perform atomic upgrade'
+    required: false
+    default: 'false'
+  
   image_tag:
     description: 'Image tag to use'
     default: ''
@@ -86,7 +101,17 @@ runs:
         TERM: xterm-color
         HELM_DIFF_COLOR: "true"
       run: |
-        helm upgrade --install --history-max=2 --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+        OPTS=""
+        if [ "${{ inputs.wait }}" == "true" ]; then
+          OPTS="$OPTS --wait"
+        fi
+        if [ "${{ inputs.timeout }}" != "" ]; then
+          OPTS="$OPTS --timeout ${{ inputs.timeout }}"
+        fi
+        if [ "${{ inputs.atomic }}" == "true" ]; then
+          OPTS="$OPTS --atomic"
+        fi
+        helm upgrade --install --history-max=2 --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
     - name: "Test release"        
       shell: bash
       if: inputs.test_release == 'true' && inputs.dry_run == 'false'
