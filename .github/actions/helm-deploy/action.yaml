@@ -60,7 +60,7 @@ inputs:
   diff:
     description: 'Number of lines to show in diff'
     required: false
-    default: "true"
+    default: 'true'
   
   history_max:
     description: 'Keep at most this many history entries'
