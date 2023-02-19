@@ -41,6 +41,10 @@ inputs:
   image_tag:
     description: 'Image tag to use'
     required: false
+  
+  version:
+    description: "chart version"
+    required: false
 
 runs:
   using: "composite"
@@ -66,6 +70,9 @@ runs:
         OPTS="--allow-unreleased"
         if [ "${{inputs.diff_lines}}" != "" ]; then
           OPTS="$OPTS -C ${{inputs.diff_lines}}"
+        fi
+        if [ "${{inputs.version}}" != "" ]; then
+          OPTS="$OPTS --version ${{inputs.version}}"
         fi
         if [ "${{inputs.image_tag}}" != "" ]; then
           helm diff upgrade $OPTS --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
