@@ -140,7 +140,7 @@ runs:
         if [ "${{ inputs.atomic }}" == "true" ]; then
           OPTS="$OPTS --atomic"
         fi
-        if [ "${{ inputs.atomic }}" != "" ]; then
+        if [ "${{ inputs.version }}" != "" ]; then
           OPTS="$OPTS --version ${{ inputs.version }}"
         fi
         helm upgrade --install --history-max=${{ inputs.history_max }} --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
