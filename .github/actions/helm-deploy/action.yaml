@@ -100,6 +100,7 @@ runs:
         namespace: ${{ inputs.namespace }}
         chart: ${{ inputs.chart }}
         release_name: ${{ inputs.release_name }}
+        version: ${{ inputs.version }}
         repo: ${{ inputs.repo }}
         values: ${{ inputs.values }}
         image_tag: ${{ inputs.image_tag }}
