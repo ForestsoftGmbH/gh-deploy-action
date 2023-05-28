@@ -19,7 +19,12 @@ inputs:
     description: 'Name of the Helm repo'
     required: false
     default: forestsoft
-  
+   
+  version:
+    description: 'Chart Version to use'
+    required: false
+    default: ''
+
   repo:
     description: 'URL to repo'
     required: false
@@ -53,10 +58,15 @@ runs:
       env:
         TERM: xterm-color
       run: |
+        OPTS=""
+        if [ "${{ inputs.version }}" != "" ]; then
+          OPTS="$OPTS --version ${{ inputs.version }}"
+        fi
+        
         if [ "${{inputs.image_tag}}" == "" ]; then
-          helm upgrade --install --dry-run --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} ${{ inputs.release_name }} ${{ inputs.chart }}
+          helm upgrade --install --dry-run $OPTS --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} ${{ inputs.release_name }} ${{ inputs.chart }}
         else
-          helm upgrade --install --dry-run --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+          helm upgrade --install --dry-run $OPTS --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
         fi
         
         
