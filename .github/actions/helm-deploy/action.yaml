@@ -30,7 +30,8 @@ inputs:
  
   values:
     description: 'Path to Values to use'
-    required: true
+    default: ''
+    required: false
 
   wait:
     description: 'Wait for resources to be ready'
@@ -143,7 +144,13 @@ runs:
         if [ "${{ inputs.version }}" != "" ]; then
           OPTS="$OPTS --version ${{ inputs.version }}"
         fi
-        helm upgrade --install --history-max=${{ inputs.history_max }} --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
+        if [ "${{inputs.values}}" != "" ]; then
+          OPTS="$OPTS -f ${{inputs.values}}"
+        fi
+        if [ "${{inputs.image_tag}}" != "" ]; then
+          OPTS="$OPTS  --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}}"
+        fi
+        helm upgrade --install --history-max=${{ inputs.history_max }} --namespace ${{ inputs.namespace }} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
     - name: "Test release"        
       shell: bash
       if: inputs.test_release == 'true' && inputs.dry_run == 'false'

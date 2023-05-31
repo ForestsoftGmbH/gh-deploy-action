@@ -36,7 +36,8 @@ inputs:
 
   values:
     description: 'Path to Values to use'
-    required: true
+    default: ''
+    required: false
 
   image_tag:
     description: 'Image tag to use'
@@ -63,11 +64,15 @@ runs:
           OPTS="$OPTS --version ${{ inputs.version }}"
         fi
         
-        if [ "${{inputs.image_tag}}" == "" ]; then
-          helm upgrade --install --dry-run $OPTS --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} ${{ inputs.release_name }} ${{ inputs.chart }}
-        else
-          helm upgrade --install --dry-run $OPTS --namespace ${{ inputs.namespace }} -f ${{ inputs.values }} --set image.tag=${{inputs.image_tag}} ${{ inputs.release_name }} ${{ inputs.chart }}
+        if [ "${{inputs.values}}" != "" ]; then
+          OPTS="$OPTS -f ${{inputs.values}}"
         fi
+        
+        if [ "${{inputs.image_tag}}" != "" ]; then
+          OPTS="$OPTS  --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}}"
+        fi
+        helm upgrade --install --dry-run $OPTS --namespace ${{ inputs.namespace }} ${{ inputs.release_name }} ${{ inputs.chart }}
+        
         
         
        
