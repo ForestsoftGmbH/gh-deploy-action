@@ -52,6 +52,11 @@ inputs:
     description: 'Image tag to use'
     default: ''
     required: false
+  
+  database_image_tag:
+    description: 'Database Image tag to use'
+    default: ''
+    required: false
 
   test_release:
     description: 'Run Helm tests after release'
@@ -105,6 +110,7 @@ runs:
         repo: ${{ inputs.repo }}
         values: ${{ inputs.values }}
         image_tag: ${{ inputs.image_tag }}
+        database_image_tag: ${{ inputs.database_image_tag }}
         diff_lines: ${{ inputs.diff_lines }}
         kube_config: ${{ inputs.kube_config }}
     
@@ -119,6 +125,7 @@ runs:
         values: ${{ inputs.values }}
         version: ${{ inputs.version }}
         image_tag: ${{ inputs.image_tag }}
+        database_image_tag: ${{ inputs.database_image_tag }}
         kube_config: ${{ inputs.kube_config }}
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
       if: inputs.dry_run == 'false'
@@ -148,7 +155,12 @@ runs:
           OPTS="$OPTS -f ${{inputs.values}}"
         fi
         if [ "${{inputs.image_tag}}" != "" ]; then
-          OPTS="$OPTS  --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}}"
+          OPTS="$OPTS  --set image.tag=${{inputs.image_tag}}"
+        fi
+        if [ "${{inputs.database_image_tag}}" != "" ]; then
+          OPTS="$OPTS  --set database.image.tag=${{inputs.database_image_tag}}"
+        else if [ "${{inputs.image_tag}}" != "" ]; then
+          OPTS="$OPTS  --set database.image.tag=${{inputs.image_tag}}"
         fi
         helm upgrade --install --history-max=${{ inputs.history_max }} --namespace ${{ inputs.namespace }} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
     - name: "Test release"        

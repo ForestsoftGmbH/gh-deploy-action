@@ -42,6 +42,10 @@ inputs:
   image_tag:
     description: 'Image tag to use'
     required: false
+  
+  database_image_tag:
+    description: 'Database Image tag to use'
+    required: false
 
 runs:
   using: "composite"
@@ -69,8 +73,14 @@ runs:
         fi
         
         if [ "${{inputs.image_tag}}" != "" ]; then
-          OPTS="$OPTS  --set image.tag=${{inputs.image_tag}} --set database.image.tag=${{inputs.image_tag}}"
+          OPTS="$OPTS  --set image.tag=${{inputs.image_tag}}"
         fi
+        if [ "${{inputs.database_image_tag}}" != "" ]; then
+          OPTS="$OPTS  --set database.image.tag=${{inputs.database_image_tag}}"
+        else if [ "${{inputs.image_tag}}" != "" ]; then
+          OPTS="$OPTS  --set database.image.tag=${{inputs.image_tag}}"
+        fi
+
         helm upgrade --install --dry-run $OPTS --namespace ${{ inputs.namespace }} ${{ inputs.release_name }} ${{ inputs.chart }}
         
         
