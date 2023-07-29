@@ -91,7 +91,7 @@ runs:
         fi
         if [ "${{inputs.database_image_tag}}" != "" ]; then
           OPTS="$OPTS  --set database.image.tag=${{inputs.database_image_tag}}"
-        else if [ "${{inputs.image_tag}}" != "" ]; then
+        elif [ "${{inputs.image_tag}}" != "" ]; then
           OPTS="$OPTS  --set database.image.tag=${{inputs.image_tag}}"
         fi
 
