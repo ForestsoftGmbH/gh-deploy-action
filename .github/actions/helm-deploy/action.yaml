@@ -33,6 +33,11 @@ inputs:
     default: ''
     required: false
 
+  debug:
+    description: 'Debug Helm Chart'
+    required: false
+    default: 'false'
+
   wait:
     description: 'Wait for resources to be ready'
     required: false
@@ -99,41 +104,10 @@ runs:
     - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-dependency-update@main
       with:
         chart: ${{ inputs.chart }}
-    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-diff@main
-      name: Validate Helm Chart
-      if: inputs.diff == 'true'
-      with:
-        namespace: ${{ inputs.namespace }}
-        chart: ${{ inputs.chart }}
-        release_name: ${{ inputs.release_name }}
-        version: ${{ inputs.version }}
-        repo: ${{ inputs.repo }}
-        values: ${{ inputs.values }}
-        image_tag: ${{ inputs.image_tag }}
-        database_image_tag: ${{ inputs.database_image_tag }}
-        diff_lines: ${{ inputs.diff_lines }}
-        kube_config: ${{ inputs.kube_config }}
     
-    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-dry-run@main
-      name: Dry Run Helm Chart
-      if: inputs.dry_run == 'true'
-      with:
-        namespace: ${{ inputs.namespace }}
-        chart: ${{ inputs.chart }}
-        repo: ${{ inputs.repo }}
-        release_name: ${{ inputs.release_name }}
-        values: ${{ inputs.values }}
-        version: ${{ inputs.version }}
-        image_tag: ${{ inputs.image_tag }}
-        database_image_tag: ${{ inputs.database_image_tag }}
-        kube_config: ${{ inputs.kube_config }}
-    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
-      if: inputs.dry_run == 'false'
-      with:
-        kube_config: ${{ inputs.kube_config }}
-    - name: "Helm Deploy"
-      if: inputs.dry_run == 'false'
+    - name: "Build Opts"
       shell: bash
+      id: optbuilder
       env:
         TERM: xterm-color
         HELM_DIFF_COLOR: "true"
@@ -162,7 +136,59 @@ runs:
         elif [ "${{inputs.image_tag}}" != "" ]; then
           OPTS="$OPTS  --set database.image.tag=${{inputs.image_tag}}"
         fi
-        helm upgrade --install --history-max=${{ inputs.history_max }} --namespace ${{ inputs.namespace }} $OPTS ${{ inputs.release_name }} ${{ inputs.chart }}
+        echo "opts=$OPTS" >> $GITHUB_OUTPUT
+
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-diff@main
+      name: Validate Helm Chart
+      if: inputs.diff == 'true' && inputs.debug == 'false'
+      with:
+        namespace: ${{ inputs.namespace }}
+        chart: ${{ inputs.chart }}
+        release_name: ${{ inputs.release_name }}
+        version: ${{ inputs.version }}
+        repo: ${{ inputs.repo }}
+        values: ${{ inputs.values }}
+        image_tag: ${{ inputs.image_tag }}
+        database_image_tag: ${{ inputs.database_image_tag }}
+        diff_lines: ${{ inputs.diff_lines }}
+        kube_config: ${{ inputs.kube_config }}
+    
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-dry-run@main
+      name: Dry Run Helm Chart
+      if: inputs.dry_run == 'true' && inputs.debug == 'false'
+      with:
+        namespace: ${{ inputs.namespace }}
+        chart: ${{ inputs.chart }}
+        repo: ${{ inputs.repo }}
+        release_name: ${{ inputs.release_name }}
+        values: ${{ inputs.values }}
+        version: ${{ inputs.version }}
+        image_tag: ${{ inputs.image_tag }}
+        database_image_tag: ${{ inputs.database_image_tag }}
+        kube_config: ${{ inputs.kube_config }}
+    
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
+      if: inputs.dry_run == 'false'
+      with:
+        kube_config: ${{ inputs.kube_config }}
+    
+    - name: "Helm Template Debug"
+      if: inputs.debug == 'true'
+      shell: bash
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
+      run: |
+        helm template --debug ${{steps.optbuilder.outputs.opts}} ${{ inputs.release_name }} ${{ inputs.chart }}
+
+    - name: "Helm Deploy"
+      if: inputs.dry_run == 'false' && inputs.debug == 'false'
+      shell: bash
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
+      run: |
+        helm upgrade --install --history-max=${{ inputs.history_max }} --namespace ${{ inputs.namespace }} ${{steps.optbuilder.outputs.opts}} ${{ inputs.release_name }} ${{ inputs.chart }}
     - name: "Test release"        
       shell: bash
       if: inputs.test_release == 'true' && inputs.dry_run == 'false'
