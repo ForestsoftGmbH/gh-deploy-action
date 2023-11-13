@@ -63,6 +63,11 @@ inputs:
     default: ''
     required: false
 
+  force:
+    description: 'Force upgrade'
+    required: false
+    default: 'false'
+
   test_release:
     description: 'Run Helm tests after release'
     required: false
@@ -124,6 +129,9 @@ runs:
         fi
         if [ "${{ inputs.version }}" != "" ]; then
           OPTS="$OPTS --version ${{ inputs.version }}"
+        fi
+        if [ "${{ inputs.force }}" == "true" ]; then
+          OPTS="$OPTS --force"
         fi
         if [ "${{inputs.values}}" != "" ]; then
           OPTS="$OPTS -f ${{inputs.values}}"
