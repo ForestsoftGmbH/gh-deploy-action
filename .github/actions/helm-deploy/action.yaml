@@ -190,7 +190,7 @@ runs:
         helm template --debug ${{steps.optbuilder.outputs.opts}} ${{ inputs.release_name }} ${{ inputs.chart }}
 
     - name: "Helm Deploy"
-      if: inputs.dry_run == 'false' && inputs.debug == 'false'
+      if: inputs.dry_run == 'false'
       shell: bash
       env:
         TERM: xterm-color
