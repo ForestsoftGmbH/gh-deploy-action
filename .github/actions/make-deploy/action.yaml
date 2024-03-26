@@ -11,6 +11,11 @@ inputs:
     description: 'Kube config secret as base64 string'
     required: true
 
+  repo_name:
+    description: 'Name of the Helm repo'
+    required: false
+    default: forestsoft
+    
   repo:
     description: 'URL to repo'
     required: false
