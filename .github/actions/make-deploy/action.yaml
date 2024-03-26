@@ -60,9 +60,8 @@ runs:
       shell: bash
       if: inputs.diff == 'true'
       run: |
+        cp -R /root/.local ~/
         helm plugin list
-        whoami
-        ls -al ~/.local/share/helm/plugins/
         make diff
     
     - name: "Helm Template Debug"
