@@ -1,0 +1,86 @@
+name: Make Deploy
+description: Deployment using makefile. make install
+
+inputs: 
+
+  environment:
+    description: 'Environment to deploy'
+    required: true
+
+  kube_config:
+    description: 'Kube config secret as base64 string'
+    required: true
+
+  repo:
+    description: 'URL to repo'
+    required: false
+    default: 'https://forestsoftgmbh.github.io/helm-charts/charts'
+
+  dry_run:
+    description: 'Dry run'
+    required: false
+    default: 'true'
+  
+  diff:
+    description: 'Number of lines to show in diff'
+    required: false
+    default: 'true'
+
+  debug:
+    description: 'Debug Helm Chart'
+    required: false
+    default: 'false'
+
+  test_release:
+    description: 'Run Helm tests after release'
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: ForestsoftGmbH/gh-deploy-action/.github/actions/helm-repo@main
+      if: inputs.repo != ''
+      with:
+        repo_name: ${{ inputs.repo_name }}
+        repo: ${{ inputs.repo }}
+   
+    - name: "Kube Credentials"
+      uses: ForestsoftGmbH/gh-deploy-action/.github/actions/kube-credentials@main
+      if: inputs.dry_run == 'false'
+      with:
+        kube_config: ${{ inputs.kube_config }}
+    
+    - name: Validate Helm Chart
+      shell: bash
+      if: inputs.diff == 'true'
+      run: |
+        make diff
+    
+    - name: "Helm Template Debug"
+      if: inputs.debug == 'true'
+      shell: bash
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
+      run: |
+        make template
+
+    - name: "Helm Deploy"
+      if: inputs.dry_run == 'false'
+      shell: bash
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
+      run: |
+        make install
+    
+    - name: "Test release"        
+      shell: bash
+      if: inputs.test_release == 'true' && inputs.dry_run == 'false'
+      env:
+        TERM: xterm-color
+        HELM_DIFF_COLOR: "true"
+      run: |
+        make test
+       
